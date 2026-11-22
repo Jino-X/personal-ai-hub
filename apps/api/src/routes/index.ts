@@ -13,6 +13,7 @@ import { watchlistRoutes } from "./watchlists";
 import { knowledgeRoutes } from "./knowledge";
 import { assistantRoutes } from "./assistant";
 import { briefingRoutes } from "./briefings";
+import { dashboardRoutes } from "./dashboard";
 
 /** Mounts every versioned feature router under /v1. */
 export function registerRoutes(app: Hono<AppEnv>) {
@@ -32,4 +33,5 @@ export function registerRoutes(app: Hono<AppEnv>) {
   app.route("/v1/knowledge", knowledgeRoutes);
   app.route("/v1/assistant", assistantRoutes);
   app.route("/v1/briefings", briefingRoutes);
+  app.route("/v1/dashboard", dashboardRoutes);
 }
