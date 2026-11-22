@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  macOS LaunchAgent: keeps the companion running while you're logged in.
+  1. Replace /ABSOLUTE/PATH/TO/hub-companion with the output of `which hub-companion`
+     (after `uv tool install ./apps/companion`).
+  2. cp com.personalaihub.companion.plist ~/Library/LaunchAgents/
+  3. launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.personalaihub.companion.plist
+  Logs: ~/Library/Logs/hub-companion.log
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.personalaihub.companion</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/ABSOLUTE/PATH/TO/hub-companion</string>
+    <string>run</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>StandardOutPath</key>
+  <string>/tmp/hub-companion.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/hub-companion.err.log</string>
+</dict>
+</plist>

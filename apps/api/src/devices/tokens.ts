@@ -17,6 +17,8 @@ const ISSUER = "hub-api";
 const AUDIENCE = "hub-device";
 export const ACCESS_TOKEN_TTL_S = 15 * 60;
 const REFRESH_TOKEN_TTL_MS = 30 * 86_400_000;
+/** Window in which re-presenting the just-rotated token is treated as a network retry. */
+const REUSE_GRACE_MS = 2 * 60_000;
 
 export interface DeviceClaims {
   deviceId: string;
@@ -71,13 +73,19 @@ export async function rotateRefreshToken(deviceId: string, presented: string): P
   const { data: cred } = await adminDb.from("device_credentials").select("*").eq("device_id", deviceId).maybeSingle();
   if (!cred) return { ok: false, reason: "invalid" };
 
-  if (cred.previous_token_hash && cred.previous_token_hash === presentedHash) {
-    await revokeDevice(deviceId, device.user_id, "refresh_token_reuse");
-    logger.warn({ deviceId }, "refresh token reuse detected — device revoked");
-    return { ok: false, reason: "reuse" };
+  const isPrevious = Boolean(cred.previous_token_hash) && cred.previous_token_hash === presentedHash;
+  if (isPrevious) {
+    // A retry shortly after rotation is almost always a lost response, not theft.
+    const withinGrace = Date.now() - new Date(cred.rotated_at).getTime() < REUSE_GRACE_MS;
+    if (!withinGrace) {
+      await revokeDevice(deviceId, device.user_id, "refresh_token_reuse");
+      logger.warn({ deviceId }, "refresh token reuse detected — device revoked");
+      return { ok: false, reason: "reuse" };
+    }
+  } else {
+    if (cred.refresh_token_hash !== presentedHash) return { ok: false, reason: "invalid" };
+    if (new Date(cred.expires_at).getTime() < Date.now()) return { ok: false, reason: "expired" };
   }
-  if (cred.refresh_token_hash !== presentedHash) return { ok: false, reason: "invalid" };
-  if (new Date(cred.expires_at).getTime() < Date.now()) return { ok: false, reason: "expired" };
 
   const next = randomToken(32);
   const { data: updated, error } = await adminDb
@@ -89,7 +97,7 @@ export async function rotateRefreshToken(deviceId: string, presented: string): P
       rotated_at: new Date().toISOString(),
     })
     .eq("device_id", deviceId)
-    .eq("refresh_token_hash", presentedHash)
+    .eq(isPrevious ? "previous_token_hash" : "refresh_token_hash", presentedHash)
     .select("device_id");
   if (error || !updated?.length) return { ok: false, reason: "invalid" };
   return { ok: true, refreshToken: next, userId: device.user_id };
