@@ -1,7 +1,8 @@
 "use client";
 
 import type { FeedItem } from "@hub/shared";
-import { BookMarked, Copy } from "lucide-react";
+import { BookMarked, Copy, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useKnowledgeMutations } from "@/lib/api/hooks/knowledge";
@@ -12,12 +13,17 @@ import { useKnowledgeMutations } from "@/lib/api/hooks/knowledge";
  */
 export function ItemActions({ item }: { item: FeedItem }) {
   const { create } = useKnowledgeMutations();
+  const router = useRouter();
+  const prompt = `Explain "${item.title}" (${item.url}) — what it is, what's new, and why it matters to me.`;
 
   return (
     <>
       {/* A duplicate save surfaces the API's 409 ("already exists") via the global error toast. */}
       <DropdownMenuItem onSelect={() => create.mutate({ mode: "intelligence_item", item_id: item.id })}>
         <BookMarked /> Save to Knowledge Vault
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => router.push(`/assistant?prompt=${encodeURIComponent(prompt)}`)}>
+        <Sparkles /> Ask the assistant
       </DropdownMenuItem>
       <DropdownMenuItem
         onSelect={() =>
