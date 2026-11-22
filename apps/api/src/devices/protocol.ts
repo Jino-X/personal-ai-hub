@@ -23,7 +23,7 @@ const healthSchema = z.object({
     .array(
       z.object({
         name: z.string().max(200),
-        size: z.number().optional(),
+        size: z.number().nullable().optional().transform((v) => v ?? undefined),
         family: z.string().max(80).nullable().optional(),
         parameter_size: z.string().max(40).nullable().optional(),
         quantization: z.string().max(40).nullable().optional(),

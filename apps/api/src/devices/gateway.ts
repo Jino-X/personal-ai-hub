@@ -156,7 +156,9 @@ export class DeviceGateway {
       parsed = null;
     }
     if (!parsed?.success) {
-      conn.send({ type: "error", code: "invalid_message", message: "Message failed validation" });
+      const where = parsed?.error.issues[0] ? ` (${parsed.error.issues[0].path.join(".")}: ${parsed.error.issues[0].message})` : "";
+      logger.warn({ deviceId: conn.deviceId, where }, "invalid device message");
+      conn.send({ type: "error", code: "invalid_message", message: `Message failed validation${where}` });
       return;
     }
     const msg = parsed.data;

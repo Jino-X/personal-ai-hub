@@ -5,7 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import { config } from "./config";
-import { AppError } from "./lib/errors";
+import { AIUnavailableError, AppError } from "./lib/errors";
 import { logger } from "./lib/logger";
 import { rateLimit } from "./lib/rate-limit";
 import { registerRoutes } from "./routes";
@@ -54,7 +54,9 @@ export function createApp() {
 
   app.onError((err, c) => {
     if (err instanceof AppError) {
-      if (!err.expose || err.status >= 500) logger.error({ err, cause: err.cause, requestId: c.get("requestId") }, err.message);
+      // Local AI being offline is an expected, user-facing condition — not a server error.
+      if (err instanceof AIUnavailableError) logger.warn({ requestId: c.get("requestId") }, err.message);
+      else if (!err.expose || err.status >= 500) logger.error({ err, cause: err.cause, requestId: c.get("requestId") }, err.message);
       return c.json({ error: { code: err.code, message: err.message, details: err.details } }, err.status);
     }
     if (err instanceof HTTPException) {
