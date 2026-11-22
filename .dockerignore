@@ -1,0 +1,12 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+.git
+apps/companion
+docs
+supabase/.temp
