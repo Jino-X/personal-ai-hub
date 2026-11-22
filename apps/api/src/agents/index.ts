@@ -1,4 +1,5 @@
 import { registerSystemJobs } from "../jobs/system";
+import { registerProductivityAgent } from "./productivity";
 
 /**
  * Registers every agent's job handlers and schedules.
@@ -7,4 +8,5 @@ import { registerSystemJobs } from "../jobs/system";
  */
 export function registerAgents() {
   registerSystemJobs();
+  registerProductivityAgent();
 }

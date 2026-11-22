@@ -45,7 +45,8 @@ export type TaskUpdateInput = z.infer<typeof taskUpdateSchema>;
 export const taskListQuery = paginationQuery.extend({
   status: z.enum([...TASK_STATUSES, "open", "all"]).default("open"),
   priority: z.enum(TASK_PRIORITIES).optional(),
-  project_id: idSchema.optional(),
+  /** A project id, or "none" for tasks without a project (inbox). */
+  project_id: z.union([idSchema, z.literal("none")]).optional(),
   goal_id: idSchema.optional(),
   tag: z.string().max(40).optional(),
   category: z.string().max(60).optional(),
