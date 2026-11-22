@@ -6,3 +6,5 @@ packages:
 # pnpm 11: only these dependencies may run install scripts.
 allowBuilds:
   esbuild: true
+  sharp: true
+  unrs-resolver: true

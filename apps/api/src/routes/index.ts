@@ -4,6 +4,7 @@ import { aiRoutes } from "./ai";
 import { deviceRoutes } from "./devices";
 import { meRoutes } from "./me";
 import { jobRoutes, notificationRoutes } from "./notifications";
+import { searchRoutes } from "./search";
 
 /** Mounts every versioned feature router under /v1. */
 export function registerRoutes(app: Hono<AppEnv>) {
@@ -12,4 +13,5 @@ export function registerRoutes(app: Hono<AppEnv>) {
   app.route("/v1/jobs", jobRoutes);
   app.route("/v1/devices", deviceRoutes);
   app.route("/v1/ai", aiRoutes);
+  app.route("/v1/search", searchRoutes);
 }
