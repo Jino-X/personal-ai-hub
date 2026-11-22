@@ -8,6 +8,7 @@ import { searchRoutes } from "./search";
 import { calendarRoutes } from "./calendar";
 import { goalRoutes, learningRoutes } from "./goals";
 import { projectRoutes, taskRoutes } from "./tasks";
+import { intelligenceRoutes } from "./intelligence";
 
 /** Mounts every versioned feature router under /v1. */
 export function registerRoutes(app: Hono<AppEnv>) {
@@ -22,4 +23,5 @@ export function registerRoutes(app: Hono<AppEnv>) {
   app.route("/v1/goals", goalRoutes);
   app.route("/v1/learning", learningRoutes);
   app.route("/v1/calendar", calendarRoutes);
+  app.route("/v1/intelligence", intelligenceRoutes);
 }

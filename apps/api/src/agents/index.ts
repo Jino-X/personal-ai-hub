@@ -1,5 +1,8 @@
 import { registerSystemJobs } from "../jobs/system";
 import { registerProductivityAgent } from "./productivity";
+import { registerResearchAgent } from "./research";
+import { registerAINewsAgent } from "./ai-news";
+import { registerDeveloperAgent } from "./developer";
 
 /**
  * Registers every agent's job handlers and schedules.
@@ -9,4 +12,7 @@ import { registerProductivityAgent } from "./productivity";
 export function registerAgents() {
   registerSystemJobs();
   registerProductivityAgent();
+  registerResearchAgent();
+  registerAINewsAgent();
+  registerDeveloperAgent();
 }
