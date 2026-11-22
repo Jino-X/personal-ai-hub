@@ -14,6 +14,8 @@ import { knowledgeRoutes } from "./knowledge";
 import { assistantRoutes } from "./assistant";
 import { briefingRoutes } from "./briefings";
 import { dashboardRoutes } from "./dashboard";
+import { integrationRoutes } from "./integrations";
+import { accountRoutes } from "./account";
 
 /** Mounts every versioned feature router under /v1. */
 export function registerRoutes(app: Hono<AppEnv>) {
@@ -34,4 +36,6 @@ export function registerRoutes(app: Hono<AppEnv>) {
   app.route("/v1/assistant", assistantRoutes);
   app.route("/v1/briefings", briefingRoutes);
   app.route("/v1/dashboard", dashboardRoutes);
+  app.route("/v1/integrations", integrationRoutes);
+  app.route("/v1/account", accountRoutes);
 }

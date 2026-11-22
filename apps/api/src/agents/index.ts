@@ -1,5 +1,6 @@
 import { registerSystemJobs } from "../jobs/system";
 import { registerProductivityAgent } from "./productivity";
+import { registerCalendarSync } from "./productivity/google-calendar";
 import { registerResearchAgent } from "./research";
 import { registerAINewsAgent } from "./ai-news";
 import { registerDeveloperAgent } from "./developer";
@@ -15,6 +16,7 @@ import { registerBriefingAgent } from "./briefing";
 export function registerAgents() {
   registerSystemJobs();
   registerProductivityAgent();
+  registerCalendarSync();
   registerResearchAgent();
   registerAINewsAgent();
   registerDeveloperAgent();
