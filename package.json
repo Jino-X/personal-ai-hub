@@ -1,0 +1,23 @@
+{
+  "name": "personal-ai-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal AI Hub — a personal operating system for productivity, AI intelligence and knowledge, powered by local AI inference.",
+  "packageManager": "pnpm@11.2.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "pnpm --filter @hub/web dev",
+    "dev:api": "pnpm --filter @hub/api dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.13",
+    "typescript": "^7.0.2"
+  }
+}
