@@ -1,5 +1,6 @@
 "use client";
 
+import { NoteDialog } from "@/components/knowledge/add-dialogs";
 import { TaskDialog } from "@/components/productivity/task-dialog";
 import { useQuickActions } from "./quick-actions";
 
@@ -16,6 +17,7 @@ export function QuickActionDialogs() {
         mode={active === "reminder" ? "reminder" : "task"}
         onOpenChange={(open) => !open && close()}
       />
+      <NoteDialog open={active === "note"} onOpenChange={(open) => !open && close()} />
     </>
   );
 }

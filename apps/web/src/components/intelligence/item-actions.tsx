@@ -1,25 +1,34 @@
 "use client";
 
 import type { FeedItem } from "@hub/shared";
-import { Copy } from "lucide-react";
+import { BookMarked, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useKnowledgeMutations } from "@/lib/api/hooks/knowledge";
 
 /**
  * Extra per-item menu actions contributed by other modules (knowledge vault,
  * assistant). Rendered inside the item card's dropdown menu.
  */
 export function ItemActions({ item }: { item: FeedItem }) {
+  const { create } = useKnowledgeMutations();
+
   return (
-    <DropdownMenuItem
-      onSelect={() =>
-        void navigator.clipboard.writeText(item.url).then(
-          () => toast.success("Link copied"),
-          () => toast.error("Couldn't copy the link"),
-        )
-      }
-    >
-      <Copy /> Copy link
-    </DropdownMenuItem>
+    <>
+      {/* A duplicate save surfaces the API's 409 ("already exists") via the global error toast. */}
+      <DropdownMenuItem onSelect={() => create.mutate({ mode: "intelligence_item", item_id: item.id })}>
+        <BookMarked /> Save to Knowledge Vault
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        onSelect={() =>
+          void navigator.clipboard.writeText(item.url).then(
+            () => toast.success("Link copied"),
+            () => toast.error("Couldn't copy the link"),
+          )
+        }
+      >
+        <Copy /> Copy link
+      </DropdownMenuItem>
+    </>
   );
 }

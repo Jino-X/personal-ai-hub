@@ -10,6 +10,7 @@ import { goalRoutes, learningRoutes } from "./goals";
 import { projectRoutes, taskRoutes } from "./tasks";
 import { intelligenceRoutes } from "./intelligence";
 import { watchlistRoutes } from "./watchlists";
+import { knowledgeRoutes } from "./knowledge";
 
 /** Mounts every versioned feature router under /v1. */
 export function registerRoutes(app: Hono<AppEnv>) {
@@ -26,4 +27,5 @@ export function registerRoutes(app: Hono<AppEnv>) {
   app.route("/v1/calendar", calendarRoutes);
   app.route("/v1/intelligence", intelligenceRoutes);
   app.route("/v1/watchlists", watchlistRoutes);
+  app.route("/v1/knowledge", knowledgeRoutes);
 }
