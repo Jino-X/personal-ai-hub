@@ -283,6 +283,8 @@ export interface FeedItem {
   /** Metrics exactly as reported by the source API (stars, downloads, upvotes...). */
   metadata: Record<string, unknown>;
   technologies: string[];
+  /** Developer tech-topic slugs (see TECH_TOPICS). */
+  topics: string[];
   /** AI-generated fields — always presented as AI output, never as source content. */
   ai_summary: string | null;
   ai_why_it_matters: string | null;
