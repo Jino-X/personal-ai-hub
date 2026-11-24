@@ -189,11 +189,13 @@ function DeviceRow({ device: d, onRevoke }: { device: LocalAIDevice; onRevoke: (
 
 function CopyLine({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 font-mono text-xs">
-      <span className="flex-1 overflow-x-auto whitespace-nowrap">{text}</span>
+    <div className="flex items-start gap-2 rounded-md border bg-muted/50 py-1.5 pr-1.5 pl-3 font-mono text-xs leading-5">
+      {/* Long commands (the pairing one) wrap inside the box rather than widening the dialog */}
+      <code className="min-w-0 flex-1 py-0.5 [overflow-wrap:anywhere]">{text}</code>
       <Button
         size="icon-xs"
         variant="ghost"
+        className="shrink-0"
         aria-label="Copy"
         onClick={() => void navigator.clipboard.writeText(text).then(() => toast.success("Copied"))}
       >
@@ -222,7 +224,8 @@ function PairingDialog({ code, onClose }: { code: PairingCode | null; onClose: (
           <DialogDescription>Run these on the Mac with Ollama. The code works once and expires in 10 minutes.</DialogDescription>
         </DialogHeader>
         {code && (
-          <div className="space-y-4 text-sm">
+          // min-w-0: as a grid item the body would otherwise grow to its widest line instead of the dialog's width
+          <div className="min-w-0 space-y-4 text-sm">
             <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-4">
               <span className="font-mono text-2xl font-semibold tracking-widest">{code.code}</span>
               <span className={cn("text-xs tabular-nums", remaining < 60 ? "text-destructive" : "text-muted-foreground")}>
