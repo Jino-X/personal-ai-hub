@@ -17,6 +17,23 @@ function githubHeaders(): Record<string, string> {
   };
 }
 
+/**
+ * An author as text. Feeds disagree on the shape: rss-parser hands back a string, a list of names (several
+ * `dc:creator` tags), or an object such as `{ name }` or `{ _: "name" }` for Atom authors and attributed tags.
+ */
+function authorText(value: unknown): string | null {
+  if (typeof value === "string") return value.trim().slice(0, 200) || null;
+  if (Array.isArray(value)) {
+    const names = value.map(authorText).filter((n): n is string => !!n);
+    return names.length ? names.join(", ").slice(0, 200) : null;
+  }
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    return authorText(obj.name ?? obj._ ?? obj["#text"] ?? null);
+  }
+  return null;
+}
+
 const num = (v: unknown) => {
   const n = typeof v === "number" ? v : Number(String(v ?? "").replace(/[^\d.]/g, ""));
   return Number.isFinite(n) ? n : undefined;
@@ -38,7 +55,7 @@ const rssConnector: Connector = async (source) => {
         externalId: item.guid ?? null,
         url: new URL(link, source.url!).toString(),
         title: stripHtml(item.title).slice(0, 500),
-        author: (item.creator ?? (item as { dcCreator?: string }).dcCreator ?? null)?.slice(0, 200) ?? null,
+        author: authorText(item.creator ?? (item as { dcCreator?: unknown }).dcCreator),
         publishedAt: validIso(item.isoDate ?? item.pubDate),
         excerpt: clip(text, 3000),
         metadata: { categories: (item.categories ?? []).slice(0, 8) },
@@ -64,7 +81,7 @@ const arxivConnector: Connector = async (source) => {
         externalId: `arxiv:${arxivId}`,
         url: `https://arxiv.org/abs/${arxivId}`,
         title: stripHtml(item.title).replace(/\s+/g, " "),
-        author: item.creator ?? (item as { author?: string }).author ?? null,
+        author: authorText(item.creator ?? (item as { author?: unknown }).author),
         publishedAt: validIso(item.isoDate ?? item.pubDate),
         excerpt: clip(stripHtml(item.summary ?? item.content ?? item.contentSnippet ?? ""), 3000),
         metadata: { arxiv_id: arxivId, popularity: 0 },
