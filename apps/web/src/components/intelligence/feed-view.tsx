@@ -95,10 +95,10 @@ export function FeedView({ title, description, tabs, showCategories = false, sho
         </Tabs>
       )}
 
-      <div className="flex flex-col gap-2 md:flex-row md:items-center">
+      <div className="glass sticky top-16 z-20 flex flex-col gap-2 rounded-2xl border p-2 shadow-[0_16px_40px_-28px_oklch(0_0_0/0.6)] md:flex-row md:items-center">
         <div className="relative flex-1">
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input className="pl-8" placeholder="Search titles, summaries and technologies" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input className="border-transparent bg-background/50 pl-8 shadow-none" placeholder="Search titles, summaries and technologies" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex flex-wrap gap-2">
           {showCategories && (
@@ -144,8 +144,8 @@ export function FeedView({ title, description, tabs, showCategories = false, sho
               aria-pressed={technology === t.slug}
               onClick={() => setTechnology((cur) => (cur === t.slug ? null : t.slug))}
               className={cn(
-                "rounded-full border px-2.5 py-1 text-xs transition-colors hover:bg-accent",
-                technology === t.slug && "border-primary bg-primary/10 text-primary",
+                "rounded-full border bg-card/50 px-2.5 py-1 text-xs transition-all hover:-translate-y-px hover:border-primary/40 hover:bg-accent",
+                technology === t.slug && "border-primary bg-primary/15 text-primary shadow-[0_0_14px_-4px_var(--primary)]",
               )}
             >
               {t.name}
@@ -179,7 +179,7 @@ export function FeedView({ title, description, tabs, showCategories = false, sho
           }
         />
       ) : (
-        <div className="space-y-3">
+        <div className="stagger space-y-3">
           {items.map((item) => (
             <ItemCard key={item.id} item={item} variant={active.variant} onExplain={setExplaining} extraActions={(i) => <ItemActions item={i} />} />
           ))}

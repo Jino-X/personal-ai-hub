@@ -2,7 +2,6 @@
 
 import { DASHBOARD_WIDGETS, type DashboardSummary, type DashboardWidgetConfig, type DashboardWidgetId } from "@hub/shared";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { AlarmClock, ArrowDown, ArrowUp, ListTodo, MessageSquare, Settings2, StickyNote } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -14,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/lib/api/client";
 import { useUpdatePreferences } from "@/lib/api/hooks/me";
-import { greeting } from "@/lib/format";
+import { DashboardHero } from "./dashboard-hero";
 import {
   AIStatusWidget,
   BriefingWidget,
@@ -57,45 +56,39 @@ export function DashboardView() {
     }
   };
 
-  const name = data?.profile.display_name?.split(" ")[0];
-
   return (
     <PageContainer wide>
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">{format(new Date(), "EEEE, d MMMM yyyy")}</p>
-          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {greeting()}
-            {name ? `, ${name}` : ""}
-          </h1>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button size="sm" onClick={() => quick.open("task")}>
-            <ListTodo /> Task
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => quick.open("reminder")}>
-            <AlarmClock /> Reminder
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => quick.open("note")}>
-            <StickyNote /> Note
-          </Button>
-          <Button size="sm" variant="outline" asChild>
-            <Link href="/assistant">
-              <MessageSquare /> Ask AI
-            </Link>
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => setCustomizing(true)} disabled={!data}>
-            <Settings2 /> Customize
-          </Button>
-        </div>
-      </div>
+      <DashboardHero
+        data={data}
+        actions={
+          <>
+            <Button size="sm" className="shadow-[0_8px_20px_-8px_var(--primary)]" onClick={() => quick.open("task")}>
+              <ListTodo /> Task
+            </Button>
+            <Button size="sm" variant="outline" className="bg-background/40" onClick={() => quick.open("reminder")}>
+              <AlarmClock /> Reminder
+            </Button>
+            <Button size="sm" variant="outline" className="bg-background/40" onClick={() => quick.open("note")}>
+              <StickyNote /> Note
+            </Button>
+            <Button size="sm" variant="outline" className="bg-background/40" asChild>
+              <Link href="/assistant">
+                <MessageSquare /> Ask AI
+              </Link>
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setCustomizing(true)} disabled={!data}>
+              <Settings2 /> Customize
+            </Button>
+          </>
+        }
+      />
 
       {dashboard.isPending ? (
         <CardGridSkeleton cards={6} />
       ) : dashboard.isError ? (
         <ErrorState error={dashboard.error} onRetry={() => void dashboard.refetch()} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{data!.widgets.filter((w) => w.visible).map((w) => render(w.id))}</div>
+        <div className="stagger grid gap-4 md:grid-cols-2 xl:grid-cols-3">{data!.widgets.filter((w) => w.visible).map((w) => render(w.id))}</div>
       )}
 
       {data && <CustomizeDialog open={customizing} onOpenChange={setCustomizing} widgets={data.widgets} />}

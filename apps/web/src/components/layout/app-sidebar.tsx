@@ -31,7 +31,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="Personal AI Hub">
               <Link href="/dashboard" onClick={() => setOpenMobile(false)}>
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <div className="icon-tile size-8 shrink-0 rounded-lg">
                   <BrainCircuit className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left leading-tight">
@@ -47,7 +47,7 @@ export function AppSidebar() {
       <SidebarContent>
         {NAVIGATION.map((group) => (
           <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-[10.5px] tracking-[0.12em] uppercase">{group.label}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (

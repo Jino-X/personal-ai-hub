@@ -249,10 +249,8 @@ function ProjectsPanel({ selected, onSelect }: { selected: string; onSelect: (id
       key={id}
       type="button"
       onClick={() => onSelect(id)}
-      className={cn(
-        "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent",
-        selected === id && "bg-accent font-medium text-accent-foreground",
-      )}
+      data-active={selected === id}
+      className="nav-item flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent"
     >
       {icon}
       <span className="flex-1 truncate">{label}</span>

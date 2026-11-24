@@ -2,11 +2,29 @@
 
 import type { AssistantAction, AssistantStreamEvent, Citation } from "@hub/shared";
 import { useQueryClient } from "@tanstack/react-query";
-import { Brain, CircleAlert, MessageSquarePlus, Pin, PinOff, Send, Sparkles, Square, Trash2 } from "lucide-react";
+import {
+  ArrowUpRight,
+  BookMarked,
+  Brain,
+  CircleAlert,
+  CodeXml,
+  FileText,
+  GitBranch,
+  ListTodo,
+  MessageSquarePlus,
+  Newspaper,
+  Pin,
+  PinOff,
+  Send,
+  Sparkles,
+  Square,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from "react";
 import { toast } from "sonner";
+import { DepthSurface } from "@/components/auth/depth-surface";
 import { Markdown } from "@/components/common/markdown";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -22,13 +40,37 @@ import { cn } from "@/lib/utils";
 import { ActionCard, SourceList, ThinkingBlock, ToolSteps } from "./message-parts";
 
 const SUGGESTIONS = [
-  "Summarize the most important AI news from this week",
-  "What changed in the latest Next.js and React releases?",
-  "What have I saved about RAG and vector search?",
-  "Recommend repositories for building MCP servers",
-  "Plan my day based on my tasks",
-  "Write my weekly progress report",
+  { text: "Summarize the most important AI news from this week", icon: Newspaper, tint: "var(--chart-1)" },
+  { text: "What changed in the latest Next.js and React releases?", icon: CodeXml, tint: "var(--chart-2)" },
+  { text: "What have I saved about RAG and vector search?", icon: BookMarked, tint: "var(--chart-3)" },
+  { text: "Recommend repositories for building MCP servers", icon: GitBranch, tint: "var(--chart-5)" },
+  { text: "Plan my day based on my tasks", icon: ListTodo, tint: "var(--chart-4)" },
+  { text: "Write my weekly progress report", icon: FileText, tint: "var(--chart-1)" },
 ];
+
+/** The assistant's mark: a glowing core with orbiting rings, set in depth so it tilts with the pointer. */
+function AssistantOrb() {
+  return (
+    <div className="depth-perspective mx-auto size-36">
+      <div className="depth-stage relative size-full">
+        <div aria-hidden className="absolute inset-4 rounded-full bg-[var(--orb-1)] blur-2xl" />
+        <div aria-hidden className="depth-layer inset-0 [--z:-20px]">
+          <div className="animate-orbit size-full rounded-full border border-dashed border-primary/30" />
+        </div>
+        <div aria-hidden className="depth-layer inset-5 [--z:10px]">
+          <div className="animate-orbit relative size-full rounded-full border border-primary/25 [animation-direction:reverse] [animation-duration:9s]">
+            <span className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rounded-full bg-chart-2 shadow-[0_0_10px_var(--chart-2)]" />
+          </div>
+        </div>
+        <div className="depth-layer inset-0 flex items-center justify-center [--z:50px]">
+          <div className="animate-float icon-tile size-16 rounded-[22px]">
+            <Sparkles className="size-7" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface StreamState {
   userText: string;
@@ -134,7 +176,7 @@ export function AssistantView() {
 
   return (
     <div className="grid h-[calc(100svh-3.5rem)] md:grid-cols-[260px_minmax(0,1fr)]">
-      <aside className="hidden flex-col border-r md:flex">
+      <aside className="hidden flex-col border-r bg-sidebar/40 backdrop-blur-sm md:flex">
         <div className="p-3">
           <Button
             className="w-full"
@@ -155,7 +197,11 @@ export function AssistantView() {
                 <button
                   type="button"
                   onClick={() => setSelected(c.id)}
-                  className={cn("flex w-full flex-col rounded-md px-2.5 py-2 text-left hover:bg-accent", selected === c.id && "bg-accent")}
+                  className={cn(
+                    "relative flex w-full flex-col rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent/60",
+                    selected === c.id &&
+                      "bg-[linear-gradient(90deg,color-mix(in_oklch,var(--primary)_16%,transparent),transparent)] ring-1 ring-primary/15 before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-r before:bg-primary before:shadow-[0_0_10px_var(--primary)]",
+                  )}
                 >
                   <span className="flex items-center gap-1 truncate pr-12 text-sm">
                     {c.pinned && <Pin className="size-3 shrink-0 text-muted-foreground" />}
@@ -201,24 +247,32 @@ export function AssistantView() {
             )}
 
             {empty && !detail.isFetching && (
-              <div className="space-y-6 py-10 text-center">
-                <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <Sparkles className="size-6" />
-                </div>
-                <div className="space-y-1">
-                  <h1 className="text-xl font-semibold">How can I help?</h1>
-                  <p className="text-sm text-muted-foreground">
+              <DepthSurface maxTilt={12} className="page-enter space-y-8 py-8 text-center">
+                <AssistantOrb />
+                <div className="space-y-2">
+                  <h1 className="text-gradient text-2xl font-semibold tracking-tight md:text-3xl">How can I help?</h1>
+                  <p className="mx-auto max-w-xl text-sm text-muted-foreground">
                     I run on your local model and can search your knowledge vault, AI news and tasks. Anything that changes your data needs your confirmation.
                   </p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {SUGGESTIONS.map((s) => (
-                    <button key={s} type="button" onClick={() => void send(s)} className="rounded-lg border p-3 text-left text-sm transition-colors hover:bg-accent">
-                      {s}
+                <div className="stagger grid gap-3 text-left sm:grid-cols-2">
+                  {SUGGESTIONS.map(({ text, icon: Icon, tint }) => (
+                    <button
+                      key={text}
+                      type="button"
+                      onClick={() => void send(text)}
+                      data-slot="card"
+                      className="lift group flex items-start gap-3 rounded-xl border bg-card/70 p-3.5 text-left text-sm"
+                    >
+                      <span className="icon-chip size-8 shrink-0 rounded-lg" style={{ "--tint": tint } as CSSProperties}>
+                        <Icon className="size-4" />
+                      </span>
+                      <span className="flex-1 pt-1.5 leading-snug">{text}</span>
+                      <ArrowUpRight className="mt-1.5 size-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                     </button>
                   ))}
                 </div>
-              </div>
+              </DepthSurface>
             )}
 
             {messages.map((m) =>
@@ -273,8 +327,8 @@ export function AssistantView() {
           </div>
         </ScrollArea>
 
-        <form onSubmit={onSubmit} className="border-t bg-background/80 p-3 backdrop-blur">
-          <div className="mx-auto flex max-w-3xl flex-col gap-2 rounded-xl border bg-card p-2 shadow-sm">
+        <form onSubmit={onSubmit} className="p-3 pt-0">
+          <div className="glass mx-auto flex max-w-3xl flex-col gap-2 rounded-2xl border p-2 shadow-[0_20px_50px_-24px_oklch(0_0_0/0.6)] transition-[box-shadow,border-color] duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_0_4px_color-mix(in_oklch,var(--primary)_12%,transparent),0_24px_60px_-20px_color-mix(in_oklch,var(--primary)_35%,transparent)]">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -293,7 +347,7 @@ export function AssistantView() {
                   <Square /> Stop
                 </Button>
               ) : (
-                <Button type="submit" size="sm" disabled={!input.trim()}>
+                <Button type="submit" size="sm" disabled={!input.trim()} className="shadow-[0_8px_20px_-8px_var(--primary)]">
                   <Send /> Send
                 </Button>
               )}
@@ -308,7 +362,7 @@ export function AssistantView() {
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm whitespace-pre-wrap text-primary-foreground">{text}</div>
+      <div className="max-w-[85%] animate-rise rounded-2xl rounded-br-md bg-[linear-gradient(135deg,var(--tile-from),var(--tile-to))] px-4 py-2.5 text-sm whitespace-pre-wrap text-white shadow-[inset_0_1px_0_oklch(1_0_0/0.25),0_12px_28px_-14px_var(--tile-to)]">{text}</div>
     </div>
   );
 }

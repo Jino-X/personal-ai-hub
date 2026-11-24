@@ -125,7 +125,7 @@ export function GoalsView() {
               }
             />
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="stagger grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {all.map((g) => (
                 <GoalCard key={g.id} goal={g} onEdit={() => setGoalDialog({ open: true, goal: g })} onAddTask={() => setTaskForGoal(g.id)} />
               ))}
@@ -370,9 +370,9 @@ function SkillsTab() {
       ) : list.length === 0 ? (
         <EmptyState icon={Trophy} title="Track your technical skills" description="Add skills, rate your current level and set a target." />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="stagger grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {list.map((s) => (
-            <Card key={s.id} className="gap-3 py-4">
+            <Card key={s.id} className="lift gap-3 py-4">
               <CardContent className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>

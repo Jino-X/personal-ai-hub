@@ -72,7 +72,8 @@ export function BriefingsView() {
                   key={b.id}
                   type="button"
                   onClick={() => setSelectedId(b.id)}
-                  className={cn("flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-sm hover:bg-accent", effectiveId === b.id && "bg-accent font-medium")}
+                  data-active={effectiveId === b.id}
+                  className="nav-item flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-sm hover:bg-accent"
                 >
                   <span>{b.kind === "daily" ? friendlyDate(b.period_start) : `Week of ${friendlyDate(b.period_start)}`}</span>
                   {b.ai_status === "done" && <Sparkles className="size-3 text-primary" aria-label="Includes AI summary" />}

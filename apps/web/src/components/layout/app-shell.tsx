@@ -7,6 +7,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useMe } from "@/lib/api/hooks/me";
 import { AppHeader } from "./app-header";
 import { AppSidebar } from "./app-sidebar";
+import { PointerGlow } from "./pointer-glow";
 import { CommandPaletteProvider } from "./command-palette";
 import { QuickActionDialogs } from "./quick-action-dialogs";
 import { QuickActionsProvider } from "./quick-actions";
@@ -33,10 +34,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <SidebarProvider>
             <ThemeSync />
             <AppSidebar />
-            <SidebarInset>
+            <SidebarInset className="isolate bg-transparent">
+              <div aria-hidden className="app-backdrop">
+                <div className="app-grid" />
+              </div>
               <AppHeader />
-              <main className="flex-1">{children}</main>
+              <div className="relative z-[1] flex-1">{children}</div>
             </SidebarInset>
+            <PointerGlow />
             <QuickActionDialogs />
           </SidebarProvider>
         </CommandPaletteProvider>

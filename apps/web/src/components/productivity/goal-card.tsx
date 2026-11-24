@@ -29,7 +29,7 @@ export function GoalCard({ goal, onEdit, onAddTask }: { goal: GoalWithDetails; o
   const milestones = goal.milestones.filter((m) => goal.type !== "learning" || m.kind === "milestone");
 
   return (
-    <Card id={`goal-${goal.id}`} className={cn(goal.status !== "active" && "opacity-75")}>
+    <Card id={`goal-${goal.id}`} className={cn("lift", goal.status !== "active" && "opacity-75")}>
       <CardHeader className="space-y-3">
         <div className="flex items-start gap-3">
           <span className={cn("mt-1.5 size-2.5 shrink-0 rounded-full", COLOR_DOT[goal.color ?? "violet"])} />

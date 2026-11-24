@@ -136,10 +136,11 @@ export function KnowledgeView() {
                     key={d.id}
                     type="button"
                     onClick={() => setOpenDoc(d.id)}
-                    className="flex w-full items-start gap-3 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent/30"
+                    data-slot="card"
+                    className="lift flex w-full items-start gap-3 rounded-xl border bg-card/80 p-3 text-left"
                   >
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted">
-                      <DocIcon type={d.type} className="size-4 text-muted-foreground" />
+                    <div className="icon-chip size-8 shrink-0 rounded-lg">
+                      <DocIcon type={d.type} className="size-4" />
                     </div>
                     <div className="min-w-0 flex-1 space-y-1">
                       <p className="truncate text-sm font-medium">{d.title}</p>
@@ -204,7 +205,8 @@ function FolderNav({ selected, onSelect, tag, onTag }: { selected: FolderFilter;
       <button
         type="button"
         onClick={() => onSelect(id)}
-        className={cn("flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent", selected === id && "bg-accent font-medium")}
+        data-active={selected === id}
+        className="nav-item flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent"
       >
         {icon}
         <span className="flex-1 truncate">{label}</span>
@@ -294,7 +296,7 @@ function SemanticSearch({ folderId, onOpen }: { folderId: string | null; onOpen:
             {search.data.items.length} results · {search.data.mode_used} search
           </p>
           {search.data.items.map((m) => (
-            <button key={m.chunk_id} type="button" onClick={() => onOpen(m.document_id)} className="block w-full rounded-lg border p-3 text-left hover:bg-accent/30">
+            <button key={m.chunk_id} type="button" onClick={() => onOpen(m.document_id)} data-slot="card" className="lift block w-full rounded-xl border bg-card/80 p-3 text-left">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <DocIcon type={m.doc_type} className="size-4 text-muted-foreground" />
                 {m.title}

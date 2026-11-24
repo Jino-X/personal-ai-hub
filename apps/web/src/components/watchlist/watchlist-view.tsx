@@ -82,10 +82,8 @@ export function WatchlistView() {
                   key={l.id}
                   type="button"
                   onClick={() => setSelectedId(l.id)}
-                  className={cn(
-                    "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent",
-                    selected?.id === l.id && "bg-accent font-medium",
-                  )}
+                  data-active={selected?.id === l.id}
+                  className="nav-item flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent"
                 >
                   <Eye className="size-4 text-muted-foreground" />
                   <span className="flex-1 truncate">{l.name}</span>
@@ -242,7 +240,7 @@ function WatchlistDetail({ list }: { list: WatchlistWithItems }) {
                 className={cn("block rounded-lg border p-3 transition-colors hover:bg-accent/40", !m.seen_at && "border-primary/30 bg-primary/[0.03]")}
               >
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  {!m.seen_at && <span className="size-1.5 rounded-full bg-primary" />}
+                  {!m.seen_at && <span className="size-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />}
                   <Badge variant="secondary" className="text-[10px]">
                     {m.watchlist_item?.value}
                   </Badge>

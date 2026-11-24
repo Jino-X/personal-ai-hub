@@ -4,7 +4,7 @@ import type { DashboardSummary } from "@hub/shared";
 import { format } from "date-fns";
 import { ArrowRight, ArrowUpRight, BookMarked, CalendarDays, CodeXml, Cpu, Eye, ListTodo, Newspaper, Sparkles, Target } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { BriefingContentView } from "@/components/briefings/briefing-content";
 import { DocIcon } from "@/components/knowledge/meta";
 import { TaskRow } from "@/components/productivity/task-row";
@@ -18,18 +18,35 @@ import { useAIStatus } from "@/lib/api/hooks/system";
 import { friendlyDate, relativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-function Widget({ title, icon: Icon, href, children, className }: { title: string; icon: typeof ListTodo; href?: string; children: ReactNode; className?: string }) {
+function Widget({
+  title,
+  icon: Icon,
+  tint = "var(--chart-1)",
+  href,
+  children,
+  className,
+}: {
+  title: string;
+  icon: typeof ListTodo;
+  tint?: string;
+  href?: string;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
     <Card className={cn("gap-3", className)}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <Icon className="size-4 text-muted-foreground" /> {title}
+        <CardTitle className="flex items-center gap-2.5 text-sm">
+          <span className="icon-chip size-7 rounded-lg" style={{ "--tint": tint } as CSSProperties}>
+            <Icon className="size-4" />
+          </span>
+          {title}
         </CardTitle>
         {href && (
           <CardAction>
             <Button asChild variant="ghost" size="xs">
-              <Link href={href}>
-                View all <ArrowRight />
+              <Link href={href} className="group/all text-muted-foreground hover:text-foreground">
+                View all <ArrowRight className="transition-transform group-hover/all:translate-x-0.5" />
               </Link>
             </Button>
           </CardAction>
@@ -47,7 +64,7 @@ function Empty({ children }: { children: ReactNode }) {
 export function BriefingWidget({ data }: { data: DashboardSummary }) {
   const generate = useGenerateBriefing();
   return (
-    <Widget title="Daily briefing" icon={Newspaper} href="/briefings" className="md:col-span-2">
+    <Widget title="Daily briefing" icon={Newspaper} tint="var(--chart-1)" href="/briefings" className="md:col-span-2">
       {data.briefing ? (
         <>
           <p className="text-xs text-muted-foreground">
@@ -70,7 +87,7 @@ export function BriefingWidget({ data }: { data: DashboardSummary }) {
 export function TasksWidget({ data, onNewTask }: { data: DashboardSummary; onNewTask: () => void }) {
   const { today, overdue, completed_today, open_total } = data.tasks;
   return (
-    <Widget title="Today's tasks" icon={ListTodo} href="/productivity/tasks">
+    <Widget title="Today's tasks" icon={ListTodo} tint="var(--chart-1)" href="/productivity/tasks">
       <p className="text-xs text-muted-foreground">
         {completed_today} done today · {open_total} open{overdue.length > 0 && <span className="text-destructive"> · {overdue.length} overdue</span>}
       </p>
@@ -90,7 +107,7 @@ export function TasksWidget({ data, onNewTask }: { data: DashboardSummary; onNew
 
 export function EventsWidget({ data }: { data: DashboardSummary }) {
   return (
-    <Widget title="Upcoming events" icon={CalendarDays} href="/productivity/calendar">
+    <Widget title="Upcoming events" icon={CalendarDays} tint="var(--chart-2)" href="/productivity/calendar">
       {data.events.length === 0 ? (
         <Empty>No events in the next 3 days.</Empty>
       ) : (
@@ -115,7 +132,7 @@ export function EventsWidget({ data }: { data: DashboardSummary }) {
 
 export function GoalsWidget({ data }: { data: DashboardSummary }) {
   return (
-    <Widget title="Goal progress" icon={Target} href="/productivity/goals">
+    <Widget title="Goal progress" icon={Target} tint="var(--chart-4)" href="/productivity/goals">
       {data.goals.length === 0 ? (
         <Empty>No active goals yet.</Empty>
       ) : (
@@ -166,7 +183,7 @@ function FeedList({ items }: { items: DashboardSummary["intelligence"] }) {
 
 export function IntelligenceWidget({ data }: { data: DashboardSummary }) {
   return (
-    <Widget title="Latest AI updates" icon={Newspaper} href="/intelligence/ai-news">
+    <Widget title="Latest AI updates" icon={Newspaper} tint="var(--chart-5)" href="/intelligence/ai-news">
       {data.intelligence.length === 0 ? <Empty>No recent updates — sources refresh in the background.</Empty> : <FeedList items={data.intelligence} />}
     </Widget>
   );
@@ -174,7 +191,7 @@ export function IntelligenceWidget({ data }: { data: DashboardSummary }) {
 
 export function DeveloperWidget({ data }: { data: DashboardSummary }) {
   return (
-    <Widget title="Developer updates" icon={CodeXml} href="/intelligence/developer-news">
+    <Widget title="Developer updates" icon={CodeXml} tint="var(--chart-3)" href="/intelligence/developer-news">
       {data.developer.length === 0 ? <Empty>No new releases this week.</Empty> : <FeedList items={data.developer} />}
     </Widget>
   );
@@ -182,7 +199,7 @@ export function DeveloperWidget({ data }: { data: DashboardSummary }) {
 
 export function KnowledgeWidget({ data, onNewNote }: { data: DashboardSummary; onNewNote: () => void }) {
   return (
-    <Widget title="Recently saved" icon={BookMarked} href="/knowledge">
+    <Widget title="Recently saved" icon={BookMarked} tint="var(--chart-2)" href="/knowledge">
       {data.knowledge.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-3">
           <Empty>Your knowledge vault is empty.</Empty>
@@ -209,7 +226,7 @@ export function KnowledgeWidget({ data, onNewNote }: { data: DashboardSummary; o
 
 export function WatchlistWidget({ data }: { data: DashboardSummary }) {
   return (
-    <Widget title="Watchlist alerts" icon={Eye} href="/watchlist">
+    <Widget title="Watchlist alerts" icon={Eye} tint="var(--chart-4)" href="/watchlist">
       {data.watchlist_matches.length === 0 ? (
         <Empty>No new matches.</Empty>
       ) : (
@@ -233,7 +250,7 @@ export function WatchlistWidget({ data }: { data: DashboardSummary }) {
 export function AIStatusWidget() {
   const { data, isPending } = useAIStatus();
   return (
-    <Widget title="Local AI" icon={Cpu} href="/settings/ai">
+    <Widget title="Local AI" icon={Cpu} tint="var(--chart-3)" href="/settings/ai">
       {isPending ? (
         <div className="flex justify-center py-4">
           <Spinner />

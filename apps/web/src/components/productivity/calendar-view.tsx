@@ -127,13 +127,13 @@ export function CalendarView() {
                     className={cn(
                       "min-h-20 border-r border-b p-1.5 text-left align-top transition-colors hover:bg-accent/40 md:min-h-24 [&:nth-child(7n)]:border-r-0",
                       !isSameMonth(day, month) && "bg-muted/30 text-muted-foreground",
-                      isSameDay(day, selected) && "bg-accent/60",
+                      isSameDay(day, selected) && "bg-[radial-gradient(120%_100%_at_0%_0%,color-mix(in_oklch,var(--primary)_18%,transparent),transparent)] shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--primary)_35%,transparent)]",
                     )}
                   >
                     <span
                       className={cn(
                         "inline-flex size-6 items-center justify-center rounded-full text-xs",
-                        isToday(day) && "bg-primary font-semibold text-primary-foreground",
+                        isToday(day) && "bg-[linear-gradient(145deg,var(--tile-from),var(--tile-to))] font-semibold text-white shadow-[0_0_14px_-2px_var(--primary)]",
                       )}
                     >
                       {format(day, "d")}
@@ -193,7 +193,7 @@ export function CalendarView() {
 function EventItem({ event: e }: { event: CalendarEvent }) {
   const { remove } = useEventMutations();
   return (
-    <div className="group space-y-1 rounded-lg border p-3">
+    <div data-slot="card" className="lift group space-y-1 rounded-xl border bg-card/70 p-3">
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-medium">{e.title}</p>
         {e.source === "google" ? (

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { errorMessage } from "@/lib/api/client";
+import { cn } from "@/lib/utils";
 
 export function EmptyState({
   icon: Icon,
@@ -21,10 +22,15 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <Empty className={className ?? "border border-dashed"}>
+    <Empty className={cn("relative overflow-hidden bg-card/30 py-10", className ?? "border border-dashed")}>
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(50%_100%_at_50%_0%,var(--glow),transparent)]" />
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Icon />
+        <EmptyMedia className="relative mb-3">
+          <span aria-hidden className="animate-pulse-ring absolute inset-0 rounded-2xl border border-primary/40" />
+          <span aria-hidden className="animate-pulse-ring absolute inset-0 rounded-2xl border border-primary/30 [animation-delay:1.2s]" />
+          <span className="animate-float icon-tile size-12 rounded-2xl">
+            <Icon className="size-5" />
+          </span>
         </EmptyMedia>
         <EmptyTitle>{title}</EmptyTitle>
         {description && <EmptyDescription>{description}</EmptyDescription>}
@@ -69,7 +75,7 @@ export function ListSkeleton({ rows = 5, className }: { rows?: number; className
   return (
     <div className={className ?? "space-y-3"}>
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="flex items-center gap-3 rounded-lg border p-3">
+        <div key={i} className="flex items-center gap-3 rounded-xl border bg-card/40 p-3">
           <Skeleton className="size-8 rounded-md" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/5" />
@@ -85,7 +91,7 @@ export function CardGridSkeleton({ cards = 6 }: { cards?: number }) {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: cards }, (_, i) => (
-        <div key={i} className="space-y-3 rounded-xl border p-4">
+        <div key={i} className="space-y-3 rounded-xl border bg-card/40 p-4">
           <Skeleton className="h-4 w-4/5" />
           <Skeleton className="h-3 w-2/5" />
           <Skeleton className="h-16 w-full" />
